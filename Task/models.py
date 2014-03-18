@@ -27,27 +27,51 @@ class Task(models.Model):
             (State_Done,'Done'))
 
     title=models.CharField(max_length=50)
-    description=models.CharField(max_length=500)
+    description=models.TextField()
     state=models.IntegerField(choices=states,default=State_Proposal)
-    subtasks=models.ForeignKey('self', null=True, blank=True)
-    initailPrice=models.IntegerField()
-    initialTime=models.IntegerField()
-    initialDate=models.DateTimeField(default=timezone.now())
-    asignedPrice=models.IntegerField(null=True, blank=True)
-    asignedTime=models.IntegerField(null=True, blank=True)
-    asignedDate=models.DateTimeField(null=True, blank=True)
-    finalPrice=models.IntegerField(null=True, blank=True)
-    finalTime=models.IntegerField(null=True, blank=True)
-    finalDate=models.DateTimeField(null=True, blank=True)
+
     owner=models.ForeignKey('User',related_name='task_owner')
     maker=models.ForeignKey('User',related_name='task_maker', null=True, blank=True)
+
+    subtasks=models.ForeignKey('self', null=True, blank=True)
+
+    initialCost=models.IntegerField()
+    initialDuration=models.IntegerField()
+    initialDate=models.DateTimeField(default=timezone.now())
+
+    asignedCost=models.IntegerField(null=True, blank=True)
+    assignedDuration=models.IntegerField(null=True, blank=True)
+    asignedDate=models.DateTimeField(null=True, blank=True)
+
+    takedTime=models.DateTimeField(null=True, blank=True)
+
+    finalCost=models.IntegerField(null=True, blank=True)
+    finalDuration=models.IntegerField(null=True, blank=True)
+    finalDate=models.DateTimeField(null=True, blank=True)
+
     proposals=models.ForeignKey('Proposal', null=True, blank=True)
-    test=models.ForeignKey('Test', null=True, blank=True)
+
+    tests=models.ForeignKey('Test', null=True, blank=True)
+
     tags=models.ForeignKey('Tag', null=True, blank=True)
+
+    def __str__(self):  # Python 3: def __str__(self):
+        return ''.join((self.title,' ',str(self.initialDate),' ',str(self.owner)))
+
+    def left_time(self):
+        if self.state==self.State_Proposal:
+            return self.initialDuration
+        elif self.state==self.State_Asigned:
+            return self.assignedDuration
+        else:
+            return self.assignedDuration-(timezone.now()-self.takedTime)
 
 
 class User(models.Model):
     name=models.CharField(max_length=50)
+
+    def __str__(self):  # Python 3: def __str__(self):
+        return self.name
 
 class Proposal(models.Model):
     description=models.CharField(max_length=500)
