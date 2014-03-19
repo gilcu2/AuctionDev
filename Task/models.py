@@ -60,13 +60,13 @@ class Task(models.Model):
 
     priority=models.ForeignKey('Priority', null=True, blank=True)
 
-    steps=models.ForeignKey('Step', null=True, blank=True)
+    steps=models.ManyToManyField('Step', null=True, blank=True)
 
     doneReport=models.TextField(null=True,blank=True)
 
     def __str__(self):
         return ''.join((self.title,' ',str(self.initialDate),' ',str(self.owner),
-                       ' ',str(self.primary),' ',str(self.priority),
+                       ' ',str(self.primary),' ',str(self.priority),' ', self.states[self.state][1],
                         ' ', str(self.initialCost), ' ',str(self.initialDuration)))
 
     def left_time(self):
@@ -85,14 +85,15 @@ class User(models.Model):
         return self.name
 
 class Proposal(models.Model):
-    description=models.CharField(max_length=500)
+    description=models.TextField()
     price=models.IntegerField()
     duration=models.IntegerField()
     maker=models.ForeignKey(User)
+
     chat=models.ForeignKey('Chat',null=True, blank=True)
 
     def __str__(self):
-        return ''.join((self.maker.name, ' ' ,str(self.price), ' ',str(self.duration)))
+        return ''.join((self.maker.name, ' ' ,str(self.price), ' ',str(self.duration),' ',))
 
 class Test(models.Model):
     State_ToCheck=0
@@ -152,3 +153,5 @@ class Step(models.Model):
     state=models.IntegerField(choices=states,default=State_TODO)
     doneReport=models.TextField(null=True,blank=True)
 
+    def __str__(self):
+        return ''.join((self.name,' ',self.states[self.state][1]))

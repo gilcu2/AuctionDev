@@ -1,12 +1,12 @@
-<h1> {{ task.title }} details</h1>
+<h1>Select proposal of {{ task.title }}</h1>
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
-<form action="{% url 'task:select_proposal' task.id %}" method="post">
+<form action="{% url 'task:detail' task.id %}" method="post">
 {% csrf_token %}
 {% for proposal in task.proposals.all %}
-    <input type="radio" name="proposal" id="proposal{{ forloop.counter }}" value="{{ proposal.id }}" />
+    <input type="radio" name="proposal" id="{{ forloop.counter }}" value="{{ proposal.id }}" />
     <label for="proposal{{ forloop.counter }}">{{ proposal.maker }} {{ proposal.price }} {{ proposal.duration }} </label><br />
 {% endfor %}
-<input type="submit" value="Save" />
+<input type="submit" value="Set" />
 </form>

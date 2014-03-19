@@ -11,9 +11,10 @@ class TaskAdmin(admin.ModelAdmin):
     fieldsets = [
         ('Definition', {'fields': ['title', 'description', 'initialCost', 'initialDuration', 'primary', 'priority', 'tags', ]}),
         ('In charge', {'fields': ['owner', 'maker', ]}),
-        ('Proposals', {'fields': ['proposals',], 'classes': ['collapse']}),
+        ('Proposals', {'fields': ['proposals','selectedProposal'], 'classes': ['collapse']}),
         ('Eval', {'fields': ['tests'], 'classes': ['collapse']}),
         ('Subtasks', {'fields': ['subtasks'], 'classes': ['collapse']}),
+        ('Steps', {'fields': ['steps'], 'classes': ['collapse']}),
     ]
 
 admin.site.register(Task,TaskAdmin)
@@ -22,3 +23,4 @@ admin.site.register(Proposal)
 admin.site.register(Test)
 admin.site.register(Tag)
 admin.site.register(Priority)
+admin.site.register(Step)
