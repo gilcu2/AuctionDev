@@ -33,7 +33,7 @@ class Task(models.Model):
     owner=models.ForeignKey('User',related_name='task_owner')
     maker=models.ForeignKey('User',related_name='task_maker', null=True, blank=True)
 
-    subtasks=models.ForeignKey('self', null=True, blank=True)
+    subtasks=models.ManyToManyField('self', null=True, blank=True)
 
     initialCost=models.IntegerField()
     initialDuration=models.IntegerField()
@@ -49,14 +49,20 @@ class Task(models.Model):
     finalDuration=models.IntegerField(null=True, blank=True)
     finalDate=models.DateTimeField(null=True, blank=True)
 
-    proposals=models.ForeignKey('Proposal', null=True, blank=True)
+    proposals=models.ManyToManyField('Proposal', null=True, blank=True)
+    selectedProposal=models.ForeignKey('Proposal', null=True, blank=True))
 
-    tests=models.ForeignKey('Test', null=True, blank=True)
+    tests=models.ManyToManyField('Test', null=True, blank=True)
 
-    tags=models.ForeignKey('Tag', null=True, blank=True)
+    tags=models.ManyToManyField('Tag', null=True, blank=True)
 
-    def __str__(self):  # Python 3: def __str__(self):
-        return ''.join((self.title,' ',str(self.initialDate),' ',str(self.owner)))
+    primary=models.BooleanField(default=True)
+
+    priority=models.ForeignKey('Priority', null=True, blank=True)
+
+    def __str__(self):
+        return ''.join((self.title,' ',str(self.initialDate),' ',str(self.owner),
+                       ' ',str(self.primary),' ',str(self.priority)))
 
     def left_time(self):
         if self.state==self.State_Proposal:
@@ -92,13 +98,19 @@ class Test(models.Model):
     state=models.IntegerField(choices=states,default=State_ToCheck)
     chat=models.ForeignKey('Chat', null=True, blank=True)
 
+    def __str__(self):
+        return ''.join(self.title,' ',str(self.state))
+
 class Tag(models.Model):
     title=models.CharField(max_length=50)
     description=models.CharField(max_length=500)
     color=models.IntegerField()
 
+    def __str__(self):
+        return self.title
+
 class Chat(models.Model):
-    entry=models.ForeignKey('Entry', blank=True)
+    entrys=models.ForeignKey('Entry', blank=True,null=True)
 
 
 class Entry(models.Model):
@@ -106,6 +118,15 @@ class Entry(models.Model):
     date=models.DateTimeField(default=timezone.now())
     publisher=models.ForeignKey('User',related_name='entry_publisher')
 
+    def __str__(self):
+        return ''.join(self.publisher.name,' ',str(self.date))
+
+class Priority(models.Model):
+    name=models.CharField(max_length=20)
+    priority=models.IntegerField()
+
+    def __str__(self):
+        return self.name
 
 
 
