@@ -49,8 +49,8 @@ class Task(models.Model):
     finalDuration=models.IntegerField(null=True, blank=True)
     finalDate=models.DateTimeField(null=True, blank=True)
 
-    proposals=models.ManyToManyField('Proposal', null=True, blank=True)
-    selectedProposal=models.ForeignKey('Proposal', null=True, blank=True))
+    proposals=models.ManyToManyField('Proposal', null=True, blank=True, related_name='task_proposals')
+    selectedProposal=models.ForeignKey('Proposal', null=True, blank=True, related_name='task_selected_proposal')
 
     tests=models.ManyToManyField('Test', null=True, blank=True)
 
