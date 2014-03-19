@@ -1,24 +1,28 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
+from django.views import generic
 
 from Task.models import *
 
 
-def index(request):
-    latest_tasks = Task.objects.order_by('-initialDate')[:5]
-    context = {'latest_tasks': latest_tasks}
-    return render(request,'Task/index.html',context)
+class IndexView(generic.ListView):
+    template_name = 'Task/index.html'
+    context_object_name = 'latest_tasks'
 
-def detail(request, task_id):
-    task=get_object_or_404(Task,pk=task_id)
-    return render(request, 'Task/detail.html', {'task': task})
+    def get_queryset(self):
+        """Return the last five published polls."""
+        return Task.objects.order_by('-initialDate')[:5]
 
+class DetailView(generic.DetailView):
+    model = Task
+    template_name = 'Task/detail.html'
 
-def tests(request, task_id):
-    return HttpResponse("You're looking at the test of task %s." % task_id)
+class ResultsView(generic.DetailView):
+    model = Task
+    template_name = 'Task/results.html'
 
-def select_proposal(request, task_id):
+def set_select_proposal(request, task_id):
     task = get_object_or_404(Task, pk=task_id)
     try:
         selected_proposal = task.proposals.get(pk=request.POST['proposal'])

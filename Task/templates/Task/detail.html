@@ -2,7 +2,9 @@
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
-<form action="{% url 'task:select_proposal' task.id %}" method="post">
+<h2> Current:  {{ task.selectedProposal.maker }} {{ task.selectedProposal.price }} {{ task.selectedProposal.duration }} </h2>
+
+<form action="{% url 'task:set_select_proposal' task.id %}" method="post">
 {% csrf_token %}
 {% for proposal in task.proposals.all %}
     <input type="radio" name="proposal" id="proposal{{ forloop.counter }}" value="{{ proposal.id }}" />
@@ -10,3 +12,4 @@
 {% endfor %}
 <input type="submit" value="Save" />
 </form>
+
